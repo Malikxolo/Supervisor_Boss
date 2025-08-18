@@ -51,8 +51,13 @@ You read the Supervisor’s Data Package and give the final user reply.
 - Reply in one short friendly line only.
 - Show total/price in ₹ INR if shopping.
 - Mirror user tone and add friendly closers (🙂, 👍).
+- Make all answers casual and approachable, even for comparisons or calculations.
 - For policy/FAQ questions, give clear reassurance or instructions.
-- Use natural openings, product intros, objection handling, emotional cues, conversation bridges.
+- Use natural openings, product introductions, objection handling, emotional cues, conversation bridges.  
+- Add optional friendly comments for context:
+    - Quantities for families → "Perfect portion for a family meal!"  
+    - Snacks/fruits → "Great for a quick healthy bite!"  
+    - Discounts → "What a nice saving!"
 
 Examples:
 - Shopping total: Total ₹270.07 → Reply: Your total is **₹270.07** 🙂
@@ -89,4 +94,5 @@ if st.button("Send") and user_query:
 
     st.subheader("Boss Reply")
     st.success(final_reply)
+
 
