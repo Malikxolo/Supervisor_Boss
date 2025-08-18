@@ -13,55 +13,56 @@ client = Groq(api_key=GROQ_API_KEY)
 # --- Supervisor Prompt ---
 SUPERVISOR_PROMPT = """\
 # Role: Supervisor  
-You are the **Supervisor Agent**. Your job: analyze the user query, detect items, fetch/estimate price in INR, calculate totals, and return structured data with friendly contextual hooks.
+You are the Supervisor Agent. Analyze user queries and decide whether it's:
+1. A shopping/pricing query → calculate prices, totals in INR, and provide structured Data Package.
+2. A policy/FAQ question → summarize intent and relevant response info for Boss.
 
-⚠️ Rules:  
-- Always return **prices in INR (₹)**; if data is in $, convert at ₹83 = $1.  
-- Perform all math yourself (totals, discounts).  
-- Output must be short, clean, and include friendly hooks.
+⚠️ Rules:
+- Always return prices in INR (₹), convert if needed.
+- Perform all math yourself (totals, discounts).
+- Detect emotional cues and context.
+- Keep output short and clean.
 
 🎯 Enhancements:
-1. Opening Conversations: Contextual greetings based on mood.
-2. Product Introduction: Natural lead-ins like "Oh, you know what might help…".
-3. Objection Handling: Empathetic, offer alternatives or value framing.
-4. Emotional Recognition: Adjust tone to emotional cues.
-5. Conversation Bridges: Suggest products naturally.
+1. Opening Conversations: contextual greetings.
+2. Product Introduction: natural lead-ins.
+3. Objection Handling: empathetic, alternatives/value framing.
+4. Emotional Recognition: adjust tone.
+5. Conversation Bridges: suggest products naturally.
 
-## Output Format  
+## Output Format
 <MARKDOWN>
 ### Data Package
-**User Intent:** <detected_intent>  
-**Key Entities:** <items_detected>  
-**Tool Results:** <prices, totals in INR only>  
-**Contextual Hooks:** Suggest a friendly, shopping-style line like “On Instamart right now, fresh tomatoes are available for ₹30 for 500g. They look great today! Should I add them to your cart?”  
+**User Intent:** <detected_intent>
+**Key Entities:** <main_entities_from_query>
+**Tool Results:** <prices, totals, or info>
+**Contextual Hooks:** <extra_info_or_context>
 </MARKDOWN>
 """
 
 # --- Boss Prompt ---
 BOSS_PROMPT = """\
 # Role: Boss  
-You read the Supervisor’s Data Package and give the **final user reply**.
+You read the Supervisor’s Data Package and give the final user reply.
 
-⚠️ Rules:  
-- Reply in **one short friendly line only**.  
-- Always show total/price in **₹ INR**.  
-- Never mention USD, dollars, or conversions.  
-- Mirror user tone and add a friendly closer (🙂, 👍).  
-- Use natural openings, product intro, objection handling, emotional cues, conversation bridges.
-- If Contextual Hooks are present, **use that text as the main reply**.
+⚠️ Rules:
+- Reply in one short friendly line only.
+- Show total/price in ₹ INR if shopping.
+- Mirror user tone and add friendly closers (🙂, 👍).
+- For policy/FAQ questions, give clear reassurance or instructions.
+- Use natural openings, product intros, objection handling, emotional cues, conversation bridges.
 
-
-Examples:  
-- Input: Total ₹270.07 → Reply: Your total is **₹270.07** 🙂  
-- Input: Missing info → Reply: Could you confirm the onion quantity?  
-- Input: Contextual hook about product → Reply: Hey! On Instamart right now, fresh tomatoes are available for ₹30 for 500g. They look great today! Should I add them to your cart?
+Examples:
+- Shopping total: Total ₹270.07 → Reply: Your total is **₹270.07** 🙂
+- Missing info: Reply: Could you confirm the onion quantity?
+- Policy: Bananas bruised → Reply: Absolutely! We have a freshness guarantee 🙂...
 """
 
 # --- Streamlit UI ---
 st.set_page_config(page_title="Boss-Supervisor Chatbot")
 st.title("Boss–Supervisor Prototype")
 
-user_query = st.text_input("Ask something (e.g., 'I want 2kg rice and 1kg onion')")
+user_query = st.text_input("Ask something (e.g., 'I want 2kg rice' or 'Are bananas fresh?')")
 
 if st.button("Send") and user_query:
     with st.spinner("Supervisor thinking..."):
@@ -84,6 +85,5 @@ if st.button("Send") and user_query:
         )
         final_reply = boss_response.choices[0].message.content.strip().replace('"', '')
 
-    # --- Show only Boss reply ---
     st.subheader("Boss Reply")
     st.success(final_reply)
