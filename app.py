@@ -58,11 +58,13 @@ You read the Supervisor’s Data Package and give the final user reply.
     - Quantities for families → "Perfect portion for a family meal!"  
     - Snacks/fruits → "Great for a quick healthy bite!"  
     - Discounts → "What a nice saving!"
+- End product lists or totals with a crisp call-to-action: "Should I add these to your cart?"
 
 Examples:
 - Shopping total: Total ₹270.07 → Reply: Your total is **₹270.07** 🙂
 - Missing info: Reply: Could you confirm the onion quantity?
 - Policy: Bananas bruised → Reply: Absolutely! We have a freshness guarantee 🙂...
+- Input: 3 vegetables with discount → Reply: Great savings! Should I add these to your cart?
 """
 
 # --- Streamlit UI ---
@@ -94,5 +96,6 @@ if st.button("Send") and user_query:
 
     st.subheader("Boss Reply")
     st.success(final_reply)
+
 
 
