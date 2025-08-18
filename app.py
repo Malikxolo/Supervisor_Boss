@@ -22,6 +22,8 @@ You are the Supervisor Agent. Analyze user queries and decide whether it's:
 - Perform all math yourself (totals, discounts).
 - Detect emotional cues and context.
 - Keep output short and clean.
+- If the user asks for **price comparisons across platforms**, fetch/estimate each platform price separately.
+- For direct price comparisons (e.g., "Is ₹45 more than ₹40?"), calculate the difference.
 
 🎯 Enhancements:
 1. Opening Conversations: contextual greetings.
@@ -87,3 +89,4 @@ if st.button("Send") and user_query:
 
     st.subheader("Boss Reply")
     st.success(final_reply)
+
