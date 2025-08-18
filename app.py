@@ -13,11 +13,9 @@ client = Groq(api_key=GROQ_API_KEY)
 # --- Supervisor Prompt ---
 SUPERVISOR_PROMPT = """\
 # Role: Supervisor  
-You are the Supervisor Agent. Analyze user queries and decide whether it's:
-1. A shopping/pricing query → calculate prices, totals in INR, and provide structured Data Package.
-2. A policy/FAQ question → summarize intent and relevant response info for Boss.
+You are the **Supervisor Agent**. Analyze user query, detect items, fetch/estimate price, and return structured data.
 
-⚠️ Rules:
+⚠️ Rules:  
 - Always return prices in INR (₹), convert if needed.
 - Perform all math yourself (totals, discounts).
 - If user asks for budget/sasta/cheap, include only affordable items.
@@ -51,7 +49,7 @@ BOSS_PROMPT = """\
 # Role: Boss  
 You read the Supervisor’s Data Package and give the final user reply.
 
-⚠️ Rules:
+⚠️ Rules:  
 - Reply in **short, friendly lines**.  
 - Always show total/price in **₹ INR**.  
 - Mirror user tone and add a friendly closer (🙂, 👍).  
@@ -72,7 +70,6 @@ You read the Supervisor’s Data Package and give the final user reply.
     - Budget → pocket-friendly options  
     - News → add mini-fun suggestion (chai/biscuit, quick snack) 
 - Mirror the user's language/tone: use Hinglish if user wrote in Roman Hindi.  
-- If user input is in Roman Hindi (Hinglish), reply **entirely in Hinglish**.
 - Add emojis where appropriate.  
 
 Examples:
@@ -83,40 +80,66 @@ Examples:
 """
 
 # --- Streamlit UI ---
-st.set_page_config(page_title="Boss-Supervisor Chatbot")
-st.title("Boss–Supervisor Prototype")
+st.set_page_config(page_title="Boss-Supervisor Chatbot", layout="wide")
+st.title("Boss–Supervisor Chatbot (WhatsApp-style)")
 
-user_query = st.text_input("Ask something (e.g., 'I want 2kg rice' or 'Are bananas fresh?')")
+# Initialize conversation in session_state
+if "conversation" not in st.session_state:
+    st.session_state.conversation = []
 
-if st.button("Send") and user_query:
+if "bot_messages" not in st.session_state:
+    st.session_state.bot_messages = []
+
+# --- Chat display container (constrained width) ---
+chat_container = st.container()
+container_style = "max-width:700px; margin:auto;"
+
+# --- Input at bottom like WhatsApp ---
+with st.container():
+    user_input = st.text_input("Type a message...", key="user_input")
+    send_button = st.button("Send")
+
+if send_button and user_input:
+    st.session_state.conversation.append({"role": "user", "content": user_input})
+
     with st.spinner("Supervisor thinking..."):
         sup_response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
-            messages=[
-                {"role": "system", "content": SUPERVISOR_PROMPT},
-                {"role": "user", "content": user_query}
-            ]
+            messages=[{"role": "system", "content": SUPERVISOR_PROMPT}] + st.session_state.conversation
         )
         data_package = sup_response.choices[0].message.content
 
-    with st.spinner("Boss responding..."):
+    with st.spinner("Bot is replying..."):
         boss_response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
-            messages=[
-                {"role": "system", "content": BOSS_PROMPT},
-                {"role": "user", "content": data_package}
-            ]
+            messages=[{"role": "system", "content": BOSS_PROMPT},
+                      {"role": "user", "content": data_package}]
         )
         final_reply = boss_response.choices[0].message.content.strip().replace('"', '')
+        st.session_state.bot_messages.append({"user": user_input, "bot": final_reply})
+        st.session_state.conversation.append({"role": "assistant", "content": final_reply})
 
-    st.subheader("Boss Reply")
-    st.success(final_reply)
+# --- Display chat with white bubbles ---
+# --- Display chat with white bubbles and black text ---
+with chat_container:
+    for chat in st.session_state.bot_messages:
+        # Bot message (left)
+        col1, col2 = st.columns([1, 4])
+        with col1:
+            st.markdown(
+                f"<div style='max-width:700px; margin:auto; background-color:#ffffff; color:#000000; padding:10px; border-radius:10px; margin:5px 0; border:1px solid #ddd;'>{chat['bot']}</div>",
+                unsafe_allow_html=True
+            )
+        with col2:
+            st.write("")
 
-
-
-
-
-
-
-
+        # User message (right)
+        col3, col4 = st.columns([4, 1])
+        with col3:
+            st.write("")
+        with col4:
+            st.markdown(
+                f"<div style='max-width:700px; margin:auto; background-color:#ffffff; color:#000000; padding:10px; border-radius:10px; margin:5px 0; border:1px solid #ddd;'>{chat['user']}</div>",
+                unsafe_allow_html=True
+            )
 
