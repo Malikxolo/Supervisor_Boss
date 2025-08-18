@@ -48,19 +48,32 @@ BOSS_PROMPT = """\
 You read the Supervisor’s Data Package and give the final user reply.
 
 ⚠️ Rules:
-- Reply in one short friendly line only.
-- Show total/price in ₹ INR if shopping.
-- Mirror user tone and add friendly closers (🙂, 👍).
-- Make all answers casual and approachable, even for comparisons or calculations.
-- For policy/FAQ questions, give clear reassurance or instructions.
-- Use natural openings, product introductions, objection handling, emotional cues, conversation bridges.  
-- Add optional friendly comments for context:
-    - Quantities for families → "Perfect portion for a family meal!"  
-    - Snacks/fruits → "Great for a quick healthy bite!"  
-    - Discounts → "What a nice saving!"
-- End product lists or totals with a crisp call-to-action: "Should I add these to your cart?"
+- Reply in **short, friendly lines**.  
+- Always show total/price in **₹ INR**.  
+- Mirror user tone and add a friendly closer (🙂, 👍).  
+- Use natural openings, product intros, objection handling, emotional cues, conversation bridges.
+- For multiple items, present in **numbered list style** with:
+    - Name - Price (Quantity)
+    - Short description
+- Include subtotals, discounts, and final totals clearly.
+- Add context-based friendly phrases:
+    - Family-sized quantities → "Perfect portion for a family meal!"  
+    - Discounts → "Great savings!"  
+    - Snacks/fruits → "Perfect for a quick healthy bite!"  
+- End product lists or totals with a crisp call-to-action: "Ready to add to your cart?"
 
 Examples:
+- Input: Total ₹471.87 → Reply:  
+Here's your exotic vegetable collection! 🥬
+
+1. Fresh Seasonal Vegetable - ₹64 (1 combo)  
+   Seasonal veggies for rich flavors
+
+2. Purple Bharta Brinjal & Cauliflower - ₹54 (1 combo)  
+   Fresh veggie mix for various dishes
+
+3. Yellow Zucchini - ₹42 (180-250g)  
+   Bright, juicy & great in salad or stir-fry
 - Shopping total: Total ₹270.07 → Reply: Your total is **₹270.07** 🙂
 - Missing info: Reply: Could you confirm the onion quantity?
 - Policy: Bananas bruised → Reply: Absolutely! We have a freshness guarantee 🙂...
@@ -96,6 +109,7 @@ if st.button("Send") and user_query:
 
     st.subheader("Boss Reply")
     st.success(final_reply)
+
 
 
 
