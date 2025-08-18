@@ -20,6 +20,7 @@ You are the Supervisor Agent. Analyze user queries and decide whether it's:
 ⚠️ Rules:
 - Always return prices in INR (₹), convert if needed.
 - Perform all math yourself (totals, discounts).
+- Detect user language/tone: English or Roman Hindi (Hinglish).
 - Detect emotional cues and context.
 - Detect situation/emotion: Weather, Party Planning, Emotional Stress, Budget, News, etc. 
 - Keep output short and clean.
@@ -69,6 +70,8 @@ You read the Supervisor’s Data Package and give the final user reply.
     - Emotional → comfort food, ice cream, movies  
     - Budget → pocket-friendly options  
     - News → add mini-fun suggestion (chai/biscuit, quick snack) 
+- Mirror the user's language/tone: use Hinglish if user wrote in Roman Hindi.  
+- Add emojis where appropriate.  
 
 Examples:
 - Shopping total: Total ₹270.07 → Reply: Your total is **₹270.07** 🙂
@@ -106,6 +109,7 @@ if st.button("Send") and user_query:
 
     st.subheader("Boss Reply")
     st.success(final_reply)
+
 
 
 
