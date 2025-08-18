@@ -71,6 +71,7 @@ You read the Supervisor’s Data Package and give the final user reply.
     - Budget → pocket-friendly options  
     - News → add mini-fun suggestion (chai/biscuit, quick snack) 
 - Mirror the user's language/tone: use Hinglish if user wrote in Roman Hindi.  
+- If user input is in Roman Hindi (Hinglish), reply **entirely in Hinglish**.
 - Add emojis where appropriate.  
 
 Examples:
@@ -109,6 +110,7 @@ if st.button("Send") and user_query:
 
     st.subheader("Boss Reply")
     st.success(final_reply)
+
 
 
 
