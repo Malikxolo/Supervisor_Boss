@@ -21,6 +21,7 @@ You are the Supervisor Agent. Analyze user queries and decide whether it's:
 - Always return prices in INR (₹), convert if needed.
 - Perform all math yourself (totals, discounts).
 - Detect emotional cues and context.
+- Detect situation/emotion: Weather, Party Planning, Emotional Stress, Budget, News, etc. 
 - Keep output short and clean.
 - If the user asks for **price comparisons across platforms**, fetch/estimate each platform price separately.
 - For direct price comparisons (e.g., "Is ₹45 more than ₹40?"), calculate the difference.
@@ -37,6 +38,7 @@ You are the Supervisor Agent. Analyze user queries and decide whether it's:
 ### Data Package
 **User Intent:** <detected_intent>
 **Key Entities:** <main_entities_from_query>
+**Situation:** <Weather / Party / Emotional / Budget / News / etc.>
 **Tool Results:** <prices, totals, or info>
 **Contextual Hooks:** <extra_info_or_context>
 </MARKDOWN>
@@ -61,6 +63,12 @@ You read the Supervisor’s Data Package and give the final user reply.
     - Discounts → "Great savings!"  
     - Snacks/fruits → "Perfect for a quick healthy bite!"  
 - End product lists or totals with a crisp call-to-action: "Ready to add to your cart?"
+- Incorporate friendly suggestions naturally:  
+    - Weather → suggest chai, pakode, indoor hacks  
+    - Party → snack/cheese platter, instant starter pack  
+    - Emotional → comfort food, ice cream, movies  
+    - Budget → pocket-friendly options  
+    - News → add mini-fun suggestion (chai/biscuit, quick snack) 
 
 Examples:
 - Shopping total: Total ₹270.07 → Reply: Your total is **₹270.07** 🙂
@@ -98,6 +106,7 @@ if st.button("Send") and user_query:
 
     st.subheader("Boss Reply")
     st.success(final_reply)
+
 
 
 
