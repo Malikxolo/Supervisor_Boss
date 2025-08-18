@@ -20,6 +20,7 @@ You are the Supervisor Agent. Analyze user queries and decide whether it's:
 ⚠️ Rules:
 - Always return prices in INR (₹), convert if needed.
 - Perform all math yourself (totals, discounts).
+- If user asks for budget/sasta/cheap, include only affordable items.
 - Detect user language/tone: English or Roman Hindi (Hinglish).
 - Detect emotional cues and context.
 - Detect situation/emotion: Weather, Party Planning, Emotional Stress, Budget, News, etc. 
@@ -110,6 +111,7 @@ if st.button("Send") and user_query:
 
     st.subheader("Boss Reply")
     st.success(final_reply)
+
 
 
 
