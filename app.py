@@ -63,17 +63,6 @@ You read the Supervisor’s Data Package and give the final user reply.
 - End product lists or totals with a crisp call-to-action: "Ready to add to your cart?"
 
 Examples:
-- Input: Total ₹471.87 → Reply:  
-Here's your exotic vegetable collection! 🥬
-
-1. Fresh Seasonal Vegetable - ₹64 (1 combo)  
-   Seasonal veggies for rich flavors
-
-2. Purple Bharta Brinjal & Cauliflower - ₹54 (1 combo)  
-   Fresh veggie mix for various dishes
-
-3. Yellow Zucchini - ₹42 (180-250g)  
-   Bright, juicy & great in salad or stir-fry
 - Shopping total: Total ₹270.07 → Reply: Your total is **₹270.07** 🙂
 - Missing info: Reply: Could you confirm the onion quantity?
 - Policy: Bananas bruised → Reply: Absolutely! We have a freshness guarantee 🙂...
@@ -109,6 +98,7 @@ if st.button("Send") and user_query:
 
     st.subheader("Boss Reply")
     st.success(final_reply)
+
 
 
 
