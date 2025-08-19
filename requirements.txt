@@ -1,3 +1,5 @@
-streamlit
-python-dotenv
-groq
+streamlit==1.32.0
+groq==0.5.0
+python-dotenv==1.0.1
+requests==2.31.0
+asyncio==3.4.3
