@@ -140,9 +140,13 @@ def enhanced_supervisor_agent(user_query):
         query_context["is_weather_query"] = True
         search_queries.append(f"weather today {st.session_state.user_location} {user_query}")
     
-    # Default search
+    # Default search - Enhanced for recommendations
     if not search_queries and not any(keyword in user_query.lower() for keyword in ["sex", "lund", "chutiya", "madarchod"]):
-        search_queries.append(f"{user_query} {st.session_state.user_location} Swiggy Instamart")
+        # MINIMAL CHANGE: Add specific search for recommendation requests
+        if any(phrase in user_query.lower() for phrase in ["kuch bhi", "recommend", "batado", "suggest", "kuch bhi batado"]):
+            search_queries.append(f"Swiggy Instamart popular snacks chips cold drinks {st.session_state.user_location} price")
+        else:
+            search_queries.append(f"{user_query} {st.session_state.user_location} Swiggy Instamart")
     
     # Perform searches
     search_results = {}
@@ -197,7 +201,7 @@ Key responsibilities:
         return f"SUPERVISOR_ERROR: {str(e)}\nBasic analysis: User needs assistance."
 
 def enhanced_boss_agent(supervisor_analysis, user_query):
-    """Boss agent with natural AI thinking and proper cart handling"""
+    """Boss agent with natural AI thinking and improved recommendation handling"""
     
     # Handle location flow
     if "ANALYSIS_TYPE: LOCATION_REQUEST" in supervisor_analysis:
@@ -264,16 +268,30 @@ Natural conversation principles:
 
 Hindi understanding:
 - haan/han = yes, nahi = no, krdo = please do, chahiye = want/need
+- kuch bhi = anything/something (recommend specific items from search results)
 - Treat these as natural language, not product names
+
+CRITICAL for recommendations:
+- When users say "kuch bhi", "recommend something", "batado" - suggest 3-4 specific products with prices from search results
+- Never give generic explanations about services or delivery
+- Focus ONLY on actual products found in search results
+- If no specific products found, ask what category they prefer (snacks, drinks, fruits, etc.)
+- Be direct and product-focused, not service-focused
 
 Cart behavior:
 - Only add items after explicit user confirmation
 - For multiple items: "Item1 ₹price, Item2 ₹price cart mein add kar diye! Total ₹total hai. Swiggy app mein payment karo!"
-- Use CART_ADD: itemname ₹price for each item to be added"""
+- Use CART_ADD: itemname ₹price for each item to be added
+
+Cart limitations - be natural about these:
+- When users ask to view cart details, remove items, clear cart, or make payment
+- Tell them naturally that they need to use the Swiggy Instamart app for these operations
+- You can only add items to cart, not manage or view detailed cart contents
+- Be helpful and suggest they check the app for cart management"""
                 },
                 {"role": "user", "content": boss_prompt}
             ],
-            temperature=0.8,
+            temperature=0.4,  # Lowered for more focused responses
             max_tokens=250
         )
         
@@ -306,7 +324,6 @@ Cart behavior:
                 
                 if items_found:
                     added_items = []
-                    total_added = 0
                     for item_name, price in items_found:
                         try:
                             st.session_state.cart_items.append({
@@ -316,7 +333,6 @@ Cart behavior:
                             })
                             st.session_state.cart_total += int(price)
                             added_items.append(f"{item_name.strip()} ₹{price}")
-                            total_added += int(price)
                         except (ValueError, TypeError):
                             continue
                     
@@ -353,7 +369,6 @@ def main():
     )
     
     st.title("🛒 Swiggy Instamart Sales Assistant")
-    # st.caption("🎯 FINAL VERSION: All issues fixed, pure AI thinking, no templates!")
     
     # Display chat history
     chat_container = st.container()
@@ -389,68 +404,6 @@ def main():
         
         # Update memory
         update_user_memory(prompt, bot_response)
-    
-    # Enhanced sidebar
-    # with st.sidebar:
-    #     st.header("✅ ALL ISSUES FIXED")
-    #     st.success("✅ No templates - Pure AI")
-    #     st.success("✅ Proper cart confirmation")  
-    #     st.success("✅ Correct totals & payment")
-    #     st.success("✅ Hindi understanding")
-    #     st.success("✅ Context-aware suggestions")
-    #     st.success("✅ Direct price display")
-        
-    #     st.header("🎉 Expected Behavior")
-    #     st.info("Party → Snacks, drinks, party food")
-    #     st.info("Confirmation → Immediate cart addition")
-    #     st.info("Multiple items → List all + total")
-    #     st.info("After cart → Payment suggestion")
-        
-    #     st.header("📍 Location Info")
-    #     if st.session_state.user_location:
-    #         st.success(f"📍 {st.session_state.user_location}")
-    #     else:
-    #         st.warning("📍 Location not set")
-        
-    #     st.header("🛒 Cart Status")
-    #     if st.session_state.cart_items:
-    #         st.info(f"🛒 {len(st.session_state.cart_items)} items (₹{st.session_state.cart_total})")
-    #         with st.expander("View Cart Items"):
-    #             for i, item in enumerate(st.session_state.cart_items):
-    #                 st.text(f"{i+1}. {item['query']} - ₹{item['price']}")
-    #     else:
-    #         st.warning("🛒 Cart empty")
-        
-    #     st.header("🔧 Controls")
-    #     col1, col2 = st.columns(2)
-    #     with col1:
-    #         if st.button("🗑️ Clear Chat"):
-    #             st.session_state.messages = []
-    #             st.session_state.greeting_count = 0
-    #             st.rerun()
-    #     with col2:
-    #         if st.button("📍 Reset Location"):
-    #             st.session_state.user_location = None
-    #             st.session_state.location_asked = False
-    #             st.session_state.welcomed = False
-    #             st.rerun()
-        
-    #     col3, col4 = st.columns(2)
-    #     with col3:
-    #         if st.button("🧠 Clear Memory"):
-    #             st.session_state.user_memory = {}
-    #             st.session_state.order_history = []
-    #             st.rerun()
-    #     with col4:
-    #         if st.button("🛒 Reset Cart"):
-    #             st.session_state.cart_items = []
-    #             st.session_state.cart_total = 0
-    #             st.rerun()
-        
-    #     st.header("📊 Session Stats")
-    #     st.metric("Messages", len(st.session_state.messages))
-    #     st.metric("Cart Value", f"₹{st.session_state.cart_total}")
-    #     st.metric("Orders Remembered", len(st.session_state.order_history))
 
 if __name__ == "__main__":
     main()
